@@ -55,13 +55,12 @@ app.post("/add-book", (req, res) => {
     publisher: req.body.publisher,
     genre: req.body.genre,
   });
-  Authors.findOne({ author_name: req.body.author }, (authorFound) => {
+  Authors.findOne({ author_name: req.body.author }).then((authorFound) => {
     if (!authorFound) {
       Authors.create({ author_name: req.body.author });
     }
   });
-  Publishers.findOne(
-    { publisher_name: req.body.publisher },
+  Publishers.findOne({ publisher_name: req.body.publisher }).then(
     (publisherFound) => {
       if (!publisherFound) {
         Publishers.create({ publisher_name: req.body.publisher });

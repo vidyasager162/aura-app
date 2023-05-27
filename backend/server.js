@@ -49,7 +49,6 @@ const Books = mongoose.model("book", bookSchema);
 app.post("/add-book", (req, res) => {
   console.log(req.body);
   Books.countDocuments({}).then((count) => {
-    console.log(count);
     var number = count + 1;
     Books.create({
       acc_id: "AR-" + number,

@@ -47,6 +47,7 @@ const Publishers = mongoose.model("publisher", publisherSchema);
 const Books = mongoose.model("book", bookSchema);
 
 app.post("/add-book", (req, res) => {
+  console.log(req.body);
   Books.create({
     acc_id: "AR-" + (Books.countDocuments({}) + 1),
     book_name: req.body.book_name,

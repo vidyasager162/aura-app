@@ -48,12 +48,23 @@ const Books = mongoose.model("book", bookSchema);
 
 app.post("/add-book", (req, res) => {
   console.log(req.body);
-  Books.create({
-    acc_id: "AR-" + (Books.countDocuments({}) + 1),
-    book_name: req.body.book_name,
-    author: req.body.author,
-    publisher: req.body.publisher,
-    genre: req.body.genre,
+  Books.countDocuments({}).then((count) => {
+    console.log(count);
+    var number = count + 1;
+    Books.create({
+      acc_id: "AR-" + number,
+      book_name: req.body.book_name,
+      author: req.body.author,
+      publisher: req.body.publisher,
+      genre: req.body.genre,
+    }).then((success) => {
+      if (success) {
+        res.send({
+          message: "success",
+        });
+        console.log("Successfully added the book");
+      }
+    });
   });
   Authors.findOne({ author_name: req.body.author }).then((authorFound) => {
     if (!authorFound) {

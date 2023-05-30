@@ -58,9 +58,10 @@ app.post("/add-book", (req, res) => {
       genre: req.body.genre,
     }).then((success) => {
       if (success) {
-        res.send({
-          message: "success",
-        });
+        // res.send({
+        //   message: "success",
+        // });
+        res.status(200).json();
         console.log("Successfully added the book");
       }
     });

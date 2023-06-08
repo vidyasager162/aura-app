@@ -78,6 +78,13 @@ app.post("/add-book", (req, res) => {
       }
     }
   );
+  req.body.genre.forEach((genre) => {
+    Genres.findOne({ genre_name: genre }).then((genreFound) => {
+      if (!genreFound) {
+        Genres.create({ genre_name: genre });
+      }
+    });
+  });
 });
 
 app.listen(8000, () => {

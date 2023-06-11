@@ -43,3 +43,8 @@ footer > p {
   padding: 0.2rem 1rem;
   pointer-events: none;
 }
+
+.login-form {
+  margin-top: 16.4rem !important;
+  margin-bottom: 14.9rem !important;
+}

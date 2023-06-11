@@ -21,6 +21,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect("mongodb://127.0.0.1:27017/AuraDB");
 
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+  userType: String,
+});
+
 const genreSchema = new mongoose.Schema({
   genre_name: String,
 });
@@ -45,6 +51,37 @@ const Genres = mongoose.model("genre", genreSchema);
 const Authors = mongoose.model("author", authorSchema);
 const Publishers = mongoose.model("publisher", publisherSchema);
 const Books = mongoose.model("book", bookSchema);
+const Users = mongoose.model("user", userSchema);
+
+// Users.findOne({ username: "204221" }).then((userFound) => {
+//   if (!userFound) {
+//     Users.create({ username: "204221", password: "sairam", userType: "Admin" });
+//   }
+// });
+
+Users.find({}).then(async (userFound) => {
+  const hashedPassword = await bcrypt.hash("2732", saltRounds);
+  if (userFound.length === 0) {
+    Users.create({
+      username: "204221",
+      password: hashedPassword,
+      userType: "Admin",
+    });
+  }
+});
+
+app.get("/check-admin", async (req, res) => {
+  const hashedPassword = await bcrypt.hash("2732", saltRounds);
+  Users.findOne({ username: "204221" }).then((userFound) => {
+    if (!userFound) {
+      Users.create({
+        username: "204221",
+        password: hashedPassword,
+        userType: "Admin",
+      });
+    }
+  });
+});
 
 app.post("/add-book", (req, res) => {
   console.log(req.body);
@@ -84,6 +121,26 @@ app.post("/add-book", (req, res) => {
         Genres.create({ genre_name: genre });
       }
     });
+  });
+});
+
+app.post("/login", (req, res) => {
+  Users.findOne({ username: req.body.username }).then(async (userFound) => {
+    if (!userFound) {
+      res.status(401).json();
+    } else {
+      bcrypt.compare(
+        req.body.password,
+        userFound.password,
+        function (err, result) {
+          if (result === true) {
+            res.status(200).json();
+          } else {
+            res.status(401).json();
+          }
+        }
+      );
+    }
   });
 });
 

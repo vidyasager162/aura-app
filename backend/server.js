@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
   username: String,
   password: String,
   userType: String,
+  cookieID: String,
 });
 
 const genreSchema = new mongoose.Schema({
@@ -127,19 +128,49 @@ app.post("/add-book", (req, res) => {
 app.post("/login", (req, res) => {
   Users.findOne({ username: req.body.username }).then(async (userFound) => {
     if (!userFound) {
-      res.status(401).json();
+      res.send({
+        message: 401,
+      });
     } else {
       bcrypt.compare(
         req.body.password,
         userFound.password,
         function (err, result) {
           if (result === true) {
-            res.status(200).json();
+            userFound.cookieID = req.body.cookieID;
+            userFound.save();
+            res.send({
+              message: 200,
+              user: userFound,
+            });
           } else {
-            res.status(401).json();
+            res.send({
+              message: 401,
+            });
           }
         }
       );
+    }
+  });
+});
+
+app.post("/retain-session", (req, res) => {
+  Users.findOne({ username: req.body.username }).then((userFound) => {
+    if (userFound) {
+      if (userFound.cookieID === req.body.cookieID) {
+        res.send({
+          message: 200,
+          user: userFound,
+        });
+      } else {
+        res.send({
+          message: 401,
+        });
+      }
+    } else {
+      res.send({
+        message: 401,
+      });
     }
   });
 });

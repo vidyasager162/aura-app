@@ -8,7 +8,7 @@ import { useCookies } from "react-cookie";
 function App() {
   useEffect(() => {
     // eslint-disable-next-line
-    //checkAdmin();
+    checkAdmin();
   }, []);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cookie, setCookie] = useCookies(["userSaved", "username", "password"]);
@@ -58,6 +58,25 @@ function App() {
       if (setResolve === true) {
         resolve();
       }
+    });
+  }
+
+  function logOut() {
+    setIsLoggedIn(false);
+    setUser({});
+    setCookie("userSaved", false);
+    setCookie("username", "");
+    setCookie("password", "");
+    setCookie("cookieID", "");
+  }
+
+  function checkAdmin() {
+    fetch("http://127.0.0.1:8000/check-admin", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
     });
   }
 
